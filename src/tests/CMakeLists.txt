@@ -67,6 +67,11 @@ if(USE_BLACKMAGIC_DECKLINK_SDI_4K)
     SUBDIRS(blackmagic/decklinksdi4k)
 endif(USE_BLACKMAGIC_DECKLINK_SDI_4K)
 
+# Pixelink SDK tests
+if(USE_PIXELINK_SDK)
+    SUBDIRS(pixelink_sdk)
+endif(USE_PIXELINK_SDK)
+
 # Support for reading video files
 if(USE_FILES)
     ADD_SUBDIRECTORY(files)

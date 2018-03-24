@@ -1,6 +1,10 @@
 PROJECT(GiftGrab)
 CMAKE_MINIMUM_REQUIRED(VERSION 3.2.0)
 
+if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/cmake-build-debug/cmake_install.cmake) #Clion
+    SET(USE_CLION ON)
+endif()
+
 # Will be used when installing
 SET(GiftGrab_PATH_SUFFIX giftgrab)
 
@@ -21,6 +25,8 @@ ADD_SUBDIRECTORY(cmake/platform)
 ADD_SUBDIRECTORY(cmake/cpp11)
 
 # Configurable options, depending on desired functionality
+OPTION(USE_PIXELINK_SDK
+        "Capture video with Pixelink SDK" OFF)
 OPTION(USE_EPIPHAN_DVI2PCIE_DUO
     "Capture video with Epiphan DVI2PCIe Duo" OFF)
 OPTION(USE_NETWORK_SOURCES
@@ -62,6 +68,10 @@ OPTION(USE_EPIPHANSDK
 OPTION(GENERATE_PERFORMANCE_OUTPUT
     "Performance benchmark reports (requires Boost.Timer and Boost.System)" OFF)
 MARK_AS_ADVANCED(GENERATE_PERFORMANCE_OUTPUT)
+
+if(USE_CLION)
+    SET(USE_PIXELINK_SDK ON)
+endif()
 
 # Inferred options off by default, and advanced
 # (i.e. not shown to user)
@@ -256,6 +266,18 @@ if(USE_EPIPHANSDK)
     LIST(APPEND HEADERS epiphansdk/epiphansdk_video_source.h)
     LIST(APPEND SOURCES epiphansdk/epiphansdk_video_source.cpp)
 endif(USE_EPIPHANSDK)
+
+# Blackmagic SDK video source
+if(USE_PIXELINK_SDK)
+    ADD_SUBDIRECTORY(cmake/pixelink_sdk)
+    INCLUDE_DIRECTORIES(${USE_PIXELINK_SDK_INCLUDE_DIRS})
+    LIST(APPEND LIBS ${USE_PIXELINK_SDK_LIBS})
+    ADD_DEFINITIONS(-DUSE_PIXELINK_SDK)
+
+    INCLUDE_DIRECTORIES(pixelink_sdk)
+    LIST(APPEND HEADERS pixelink_sdk/pixelinksdk_video_source.h)
+    LIST(APPEND SOURCES pixelink_sdk/pixelinksdk_video_source.cpp)
+endif(USE_PIXELINK_SDK)
 
 # Blackmagic SDK video source
 if(USE_BLACKMAGICSDK)

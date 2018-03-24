@@ -1,22 +1,3 @@
-CMakeLists.txt.user
-_CMakeLists.txt
-src/extern
-.idea
-**/*/pygiftgrab.so
-*.pyc
-*.latency.txt
-*.timing.txt
-*.timing.yml
-.cache
-*.egg-info
-dist
-*venv
-doc/build
-src/build
-src/dist
-src/*.egg-info
-*.swp
-
 # ---> C++
 # Compiled Object files
 *.slo
