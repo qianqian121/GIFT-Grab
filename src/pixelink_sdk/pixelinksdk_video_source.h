@@ -1,5 +1,7 @@
 #pragma once
-#include "frmgrab.h"
+
+#include "src/pixelFormat.h"
+#include "src/camera.h"
 #include "ivideosource.h"
 #include "macros.h"
 #include "broadcastdaemon.h"
@@ -13,29 +15,31 @@ protected:
     //!
     //! \brief
     //!
-    FrmGrabber * _frame_grabber;
+    std::unique_ptr<PxLCamera> _camera;
 
     //!
     //! \brief Currently only colour space
     //!
-    V2U_UINT32 _flags;
+    int _flags;
 
     //!
     //! \brief Full frame dimensions
     //!
-    V2URect _full;
+    PXL_ROI _full;
 
     //!
     //! \brief Region of interest, i.e. sub-frame
     //! \sa _full
     //!
-    V2URect _roi;
+    PXL_ROI _roi;
 
     //!
     //! \brief Buffer for acquiring frame data
     //! \sa _frame_grabber
     //!
-    V2U_GrabFrame2 * _buffer;
+    uint8_t * _buffer;
+
+    uint32_t _image_size;
 
     //!
     //! \brief
@@ -54,8 +58,8 @@ public:
     //! \throw VideoSourceError if connection attempt
     //! fails, with a detailed error message
     //!
-    VideoSourcePixelinkSDK(const std::string device_id,
-                          V2U_INT32 colour_space);
+    VideoSourcePixelinkSDK(const std::string serial_num,
+                           PXL_PIXEL_FORMATS colour_space);
 
     //!
     //! \brief Release all allocated resources
