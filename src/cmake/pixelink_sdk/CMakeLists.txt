@@ -1,7 +1,7 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.2.0)
 
 #TODO easy 20180324 set correct pixelink source dir after code refactor
-SET(PIXELINK_SDK_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../pixelink_sdk)
+SET(PIXELINK_SDK_DIR ${PROJECT_SOURCE_DIR}/pixelink_sdk)
 MESSAGE(WARNING ${PIXELINK_SDK_DIR})
 
 if(NOT PIXELINK_SDK_DIR)
@@ -21,10 +21,21 @@ endif(NOT DEFINED PIXELINK_SDK_DIR)
 
 SET(PIXELINK_SDK_INCLUDE_DIRS
     ${PIXELINK_SDK_DIR}/include
-    CACHE INTERNAL "Blackmagic Desktop Video SDK include dirs"
+    CACHE INTERNAL "Pixelink SDK include dirs"
 )
 
 SET(PIXELINK_SDK_LIBS
-    ${PIXELINK_SDK_DIR}/lib
-    CACHE INTERNAL "Blackmagic Desktop Video SDK libs to link against"
+    "PxLApi"
+#    "PxLApi -rdynamic"
+    CACHE INTERNAL "Pixelink SDK libs to link against"
 )
+
+SET(PIXELINK_SDK_LIBRARY_DIRS
+    ${PIXELINK_SDK_DIR}/lib
+    CACHE INTERNAL "Pixelink SDK library directories to link against"
+)
+
+#set(LINKER_FLAGS "-rdynamic")
+#set(LD_FLAGS ${LINKER_FLAGS})
+#set(LDFLAGS ${LINKER_FLAGS})
+#set(CMAKE_SHARED_LINKER_FLAGS ${LINKER_FLAGS})

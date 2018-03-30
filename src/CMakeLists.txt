@@ -278,14 +278,16 @@ if(USE_PIXELINK_SDK)
     ADD_SUBDIRECTORY(cmake/pixelink_sdk)
     INCLUDE_DIRECTORIES(${PIXELINK_SDK_INCLUDE_DIRS})
     LIST(APPEND LIBS ${PIXELINK_SDK_LIBS})
+    LINK_DIRECTORIES(${PIXELINK_SDK_LIBRARY_DIRS})
     ADD_DEFINITIONS(-DUSE_PIXELINK_SDK)
     if (UNIX)
         ADD_DEFINITIONS(-DPIXELINK_LINUX)
     endif (UNIX)
 
-    INCLUDE_DIRECTORIES(pixelink_sdk)
+    INCLUDE_DIRECTORIES(pixelink_sdk pixelink_sdk/src)
+    FILE(GLOB PIXELINK_SDK_SRC_FILES "pixelink_sdk/src/*.cpp")
     LIST(APPEND HEADERS pixelink_sdk/pixelinksdk_video_source.h)
-    LIST(APPEND SOURCES pixelink_sdk/pixelinksdk_video_source.cpp)
+    LIST(APPEND SOURCES pixelink_sdk/pixelinksdk_video_source.cpp ${PIXELINK_SDK_SRC_FILES})
 endif(USE_PIXELINK_SDK)
 
 # Blackmagic SDK video source
