@@ -4,9 +4,7 @@
  *
  *     Description: Class definition for a very simple camera.
  */
-
-#include "captureOEMLite.h"
-#include "utility.h"
+#include "camera.h"
 
 #include <unistd.h>
 #include <vector>
@@ -14,41 +12,15 @@
 
 using namespace std;
 
+// IMAGE_FORMAT_RAW is not in PixeLINKTypes.h -- define it to be the one after the last one
+// used by this software:
+#define IMAGE_FORMAT_RAW (IMAGE_FORMAT_JPEG+1)
+
 // define a macro that will conveniently interrupt the stream is needed to make a feature adjustment
 #define STOP_STREAM_IF_REQUIRED(FEATURE)                                                    \
     std::auto_ptr<PxLInterruptStream> _temp_ss(NULL);                                             \
     if (requiresStreamStop(FEATURE))                                                     \
         _temp_ss = std::auto_ptr<PxLInterruptStream>(new PxLInterruptStream(this, STOP_STREAM));  \
-
-// Prototypes
-extern "C" void StopButtonPressed
-  (GtkWidget* widget, GdkEventExpose* event, gpointer userdata);
-
-/***********************************************************************
- *  Global Functions
- */
-
-static gboolean previewStop (gpointer pData)
-{
-	// If the user presses the little red X in the preview window, then the API
-	// treats this just like the user calling PxLSetPreviewState STOP_PREVIEW.  We
-	// want to make this look the same as the user having pressed the stop button.
-
-	StopButtonPressed (NULL, NULL, NULL);
-
-	return false; //  false == only run once
-}
-
-extern "C" U32 previewWindowEvent
-  (HANDLE hCamera, U32 event, LPVOID pdata)
-{
-	if (PREVIEW_CLOSED == event)
-	{
-		gdk_threads_add_idle ((GSourceFunc)previewStop, NULL);
-	}
-
-	return 0;
-}
 
 /***********************************************************************
  *  Public members
@@ -95,7 +67,8 @@ PXL_RETURN_CODE PxLCamera::play()
 	}
 
 	// now, start the preview
-	rc = PxLSetPreviewStateEx(m_hCamera, START_PREVIEW, &m_previewHandle, NULL, previewWindowEvent);
+    U32 (*previewWindowEvent)(HANDLE, U32, LPVOID);
+    rc = PxLSetPreviewStateEx(m_hCamera, START_PREVIEW, &m_previewHandle, NULL, previewWindowEvent);
 	if (!API_SUCCESS(rc))
 	{
 		PxLSetStreamState (m_hCamera, currentStreamState);
@@ -164,7 +137,7 @@ bool PxLCamera::oneTimeSuppored (ULONG feature)
     rc = getFlags (feature, &flags);
     if (!API_SUCCESS(rc)) return false;
 
-    return (0 != (flags & FEATURE_FLAG_ONETIME));
+    return (0 != (flags & FEATURE_FLAG_ONEPUSH));
 }
 
 bool PxLCamera::continuousSupported (ULONG feature)
@@ -230,12 +203,10 @@ PXL_RETURN_CODE PxLCamera::performOneTimeAuto (ULONG feature)
 {
     PXL_RETURN_CODE rc = ApiSuccess;
     float value[3];
-    ULONG flags = FEATURE_FLAG_ONETIME;
+    ULONG flags = FEATURE_FLAG_ONEPUSH;
     ULONG numParameters = FEATURE_WHITE_SHADING == feature ? 3 : 1;
 
     STOP_STREAM_IF_REQUIRED(feature);
-
-    PxLWaitCursor waitCursor;  // Show a wait cursor while we are waiting for the operation to complete
 
     rc = PxLSetFeature (m_hCamera, feature, flags, numParameters, &value[0]);
     if (!API_SUCCESS(rc)) return rc;
@@ -257,7 +228,7 @@ PXL_RETURN_CODE PxLCamera::performOneTimeAuto (ULONG feature)
         rc = PxLGetFeature (m_hCamera, feature, &flags, &numParameters, &value[0]);
         if (!API_SUCCESS(rc)) return rc;
 
-        if (!(flags & FEATURE_FLAG_ONETIME)) break;  //Whoo-hoo, it's done.
+        if (!(flags & FEATURE_FLAG_ONEPUSH)) break;  //Whoo-hoo, it's done.
         usleep (1000*500); // 500 ms.
     }
 
