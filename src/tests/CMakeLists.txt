@@ -76,3 +76,8 @@ endif(USE_PIXELINK_SDK)
 if(USE_FILES)
     ADD_SUBDIRECTORY(files)
 endif(USE_FILES)
+
+# OPENCV Visulization tests
+if(USE_OPENCV)
+    ADD_SUBDIRECTORY(opencv_visulization)
+endif(USE_OPENCV)

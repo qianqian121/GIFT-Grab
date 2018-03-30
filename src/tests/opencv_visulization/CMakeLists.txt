@@ -5,6 +5,6 @@ ADD_EXECUTABLE(
         test_opencv_visulization.cpp
 )
 TARGET_LINK_LIBRARIES(
-        ${VIDEO_TARGET_FACTORY_TEST}
+        ${OPENCV_VISULIZATION_TEST}
         ${LIBS} ${NAME}
 )

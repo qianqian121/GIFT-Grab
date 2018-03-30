@@ -69,10 +69,6 @@ OPTION(GENERATE_PERFORMANCE_OUTPUT
     "Performance benchmark reports (requires Boost.Timer and Boost.System)" OFF)
 MARK_AS_ADVANCED(GENERATE_PERFORMANCE_OUTPUT)
 
-if(USE_CLION)
-    SET(USE_PIXELINK_SDK ON)
-endif()
-
 # Inferred options off by default, and advanced
 # (i.e. not shown to user)
 SET(USE_FFMPEG OFF CACHE BOOL "ON OFF" FORCE)
@@ -81,6 +77,15 @@ SET(USE_OPENCV OFF CACHE BOOL "ON OFF" FORCE)
 MARK_AS_ADVANCED(USE_OPENCV)
 SET(USE_LIBVLC OFF CACHE BOOL "ON OFF" FORCE)
 MARK_AS_ADVANCED(USE_LIBVLC)
+
+if(USE_CLION)
+    SET(USE_FILES ON)
+    SET(USE_OPENCV ON)
+    SET(USE_HEVC ON)
+    SET(BUILD_PYTHON ON)
+    SET(BUILD_TESTS ON)
+    SET(USE_PIXELINK_SDK ON)
+endif()
 
 # Check if non-free explicitly enabled for relevant components
 if(USE_NVENC AND NOT ENABLE_NONFREE)
