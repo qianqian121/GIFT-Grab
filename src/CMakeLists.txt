@@ -1,7 +1,7 @@
 PROJECT(GiftGrab)
 CMAKE_MINIMUM_REQUIRED(VERSION 3.2.0)
 
-if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/cmake-build-debug/cmake_install.cmake) #Clion
+if(EXISTS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.cbp) #Clion
     SET(USE_CLION ON)
 endif()
 
