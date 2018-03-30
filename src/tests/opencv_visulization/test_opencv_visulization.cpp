@@ -19,7 +19,7 @@ int main(int argc, char* argv[]) {
     gg::Codec codec = gg::Codec::Xvid;
     target = factory_target.create_file_writer(codec, "opencv_output.avi", 30.0);
 
-    source->attach(target);
+    source->attach(*target);
     delete target;
     return 0;
 }
