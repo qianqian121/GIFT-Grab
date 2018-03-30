@@ -4,7 +4,7 @@ CMAKE_MINIMUM_REQUIRED(VERSION 3.2.0)
 SET(PIXELINK_SDK_DIR ${PROJECT_SOURCE_DIR}/pixelink_sdk)
 MESSAGE(WARNING ${PIXELINK_SDK_DIR})
 
-if(NOT PIXELINK_SDK_DIR)
+if(NOT DEFINED PIXELINK_SDK_DIR)
     MESSAGE(FATAL_ERROR
         "PIXELINK_SDK_DIR does not seem to be set in your cmake. This is needed to find Pixelink Desktop Video SDK components.")
 endif(NOT DEFINED PIXELINK_SDK_DIR)
