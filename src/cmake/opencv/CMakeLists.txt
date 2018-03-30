@@ -7,3 +7,6 @@ SET(OpenCV_INCLUDE_DIRS ${OpenCV_INCLUDE_DIRS}
 SET(OpenCV_LIBS ${OpenCV_LIBS}
     CACHE INTERNAL "OpenCV libs"
 )
+SET(OpenCV_LIBRARY_DIRS "/opt/opencv/lib"
+    CACHE INTERNAL "OpenCV library dirs"
+)
