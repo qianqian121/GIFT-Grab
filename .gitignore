@@ -144,3 +144,6 @@ Network Trash Folder
 Temporary Items
 .apdisk
 
+# CLion
+cmake-build-debug/
+
