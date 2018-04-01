@@ -13,3 +13,5 @@ SET(FFmpeg_LIBS ${FFmpeg_LIBS}
 SET(FFmpeg_LIBRARY_DIRS ${FFmpeg_LIBRARY_DIRS}
     CACHE INTERNAL "FFmpeg library dirs"
 )
+
+message(WARNING ${FFmpeg_LIBRARY_DIRS})

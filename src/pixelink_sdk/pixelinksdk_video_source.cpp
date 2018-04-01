@@ -205,7 +205,7 @@ double VideoSourcePixelinkSDK::get_frame_rate()
 
 
     // TODO - exception GiftGrab#42
-    return 3.0;
+    return 25.0;
 }
 
 void VideoSourcePixelinkSDK::set_sub_frame(int x, int y, int width, int height)
