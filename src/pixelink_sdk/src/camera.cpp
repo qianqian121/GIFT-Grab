@@ -600,6 +600,29 @@ PXL_RETURN_CODE PxLCamera::captureImage (const char* fileName, ULONG imageType)
     return ((U32)numBytesWritten == encodedImageSize) ? ApiSuccess : ApiOSServiceError;
 }
 
+PXL_RETURN_CODE PxLCamera::getNextFrame (uint32_t rawImageSize, void*pFrame)
+{
+    PXL_RETURN_CODE rc = ApiSuccess;
+    assert(0 != m_hCamera);
+    assert (streaming());
+
+    //
+    // Step 1.
+    //     Determine the size of buffer we'll need to hold an
+    //     image from the camera, and allocate a buffer.
+    if (0 == rawImageSize) return ApiBadFrameSizeError;
+
+    FRAME_DESC frameDesc;
+
+    //
+    // Step 2.
+    //      Grab an image
+    rc = getNextFrame (rawImageSize, pFrame, &frameDesc);
+    if (!API_SUCCESS(rc)) return rc;
+
+    return rc;
+}
+
 /***********************************************************************
  *  Private members
  */

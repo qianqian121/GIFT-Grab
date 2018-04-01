@@ -14,13 +14,14 @@ VideoSourcePixelinkSDK::VideoSourcePixelinkSDK(
     , _daemon(nullptr)
 {
 
-    if (colour_space != YUV422)
+    if (colour_space != BAYER8)
     {
         // TODO - exception GiftGrab#42
         std::cerr << "Colour space " << colour_space << " not supported" << std::endl;
         return;
     }
-    else if (colour_space == YUV422)
+    else if (colour_space == BAYER8)
+//        _colour = BGRA;
         _colour = UYVY;
 
     _flags |= colour_space;
@@ -35,12 +36,24 @@ VideoSourcePixelinkSDK::VideoSourcePixelinkSDK(
     if (!API_SUCCESS(rc)) {
         std::cerr << "error!";
     }
+
+    float currentValue;
+    _camera->getValue(FEATURE_PIXEL_FORMAT, &currentValue);
+    std::cout << "Current pixel format: " << currentValue << std::endl; // PIXEL_FORMAT_BAYER8_RGGB      7
+
+//    rc = _camera->setValue(FEATURE_PIXEL_FORMAT, PxLPixelFormat_toApi(colour_space));
+//    if (!API_SUCCESS(rc)) {
+//        std::cerr << "error!";
+//    }
+
     _image_size = _camera->getImageSize();
+    _buffer = std::make_unique<uint8_t []>(_image_size);
     _full.m_width = 1920;
     _full.m_height = 1080;
     get_full_frame();
     // TODO - exception GiftGrab#42
-    if (not get_frame(frame)) return;
+    rc = _camera->play();
+    if (!get_frame(frame)) return;
 
     _daemon = new gg::BroadcastDaemon(this);
     _daemon->start(get_frame_rate());
@@ -48,6 +61,8 @@ VideoSourcePixelinkSDK::VideoSourcePixelinkSDK(
 
 VideoSourcePixelinkSDK::~VideoSourcePixelinkSDK()
 {
+    if (_camera->streaming())
+        _camera->stop();
     delete _daemon;
 }
 
@@ -60,15 +75,23 @@ bool VideoSourcePixelinkSDK::get_frame_dimensions(int & width, int & height)
 
 bool VideoSourcePixelinkSDK::get_frame(VideoFrame & frame)
 {
+    PXL_RETURN_CODE rc;
+
     if (frame.colour() != _colour)
         // TODO - exception GiftGrab#42
         return false;
 
-//    _buffer = FrmGrab_Frame(_frame_grabber, _flags, &_roi);
-    if (_buffer)
+    rc = _camera->getNextFrame(_image_size, _buffer.get());
+//    cv::Mat cv_frame_bayerbg(_roi.m_height, _roi.m_width,
+//                          CV_8UC1,
+//                          const_cast<unsigned char *>(_buffer.get()));
+//    cv::Mat cv_frame_bgra;
+//    cv::cvtColor(cv_frame_bayerbg, cv_frame_bgra, CV_BayerRG2BGRA);
+    if (API_SUCCESS(rc))
     {
+        // TODO easy 20180331 - check wether managed frame or not, to make sure zero copy
         frame.init_from_specs(
-                    static_cast<unsigned char*>(_buffer),
+                static_cast<unsigned char *>(_buffer.get()),
                     _image_size,
                     /* TODO #54 specified _roi not always
                      * respected by FrmGrab_Frame, hence
@@ -84,12 +107,46 @@ bool VideoSourcePixelinkSDK::get_frame(VideoFrame & frame)
         return false;
 }
 
+//    bool VideoSourcePixelinkSDK::get_frame(VideoFrame & frame)
+//    {
+//        PXL_RETURN_CODE rc;
+//
+//        if (frame.colour() != _colour)
+//            // TODO - exception GiftGrab#42
+//            return false;
+//
+//        rc = _camera->getNextFrame(_image_size, _buffer.get());
+//        cv::Mat cv_frame_bayerbg(_roi.m_height, _roi.m_width,
+//                                 CV_8UC1,
+//                                 const_cast<unsigned char *>(_buffer.get()));
+//        cv::Mat cv_frame_bgra;
+//        cv::cvtColor(cv_frame_bayerbg, cv_frame_bgra, CV_BayerRG2BGRA);
+//        if (API_SUCCESS(rc))
+//        {
+//            // TODO easy 20180331 - check wether managed frame or not, to make sure zero copy
+//            frame.init_from_specs(
+//                    cv_frame_bgra.data,
+//                    cv_frame_bgra.step[0] /3 * 4 * cv_frame_bgra.rows,
+//                    /* TODO #54 specified _roi not always
+//                     * respected by FrmGrab_Frame, hence
+//                     * constructing with _buffer->crop
+//                     * instead of _roi to avoid alignment
+//                     * problems when saving to video files
+//                     */
+//                    _roi.m_width, _roi.m_height
+//            );
+//            return true;
+//        }
+//        else
+//            return false;
+//    }
+
 double VideoSourcePixelinkSDK::get_frame_rate()
 {
 
 
     // TODO - exception GiftGrab#42
-    return 0.0;
+    return 30.0;
 }
 
 void VideoSourcePixelinkSDK::set_sub_frame(int x, int y, int width, int height)

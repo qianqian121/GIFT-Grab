@@ -37,7 +37,7 @@ protected:
     //! \brief Buffer for acquiring frame data
     //! \sa _frame_grabber
     //!
-    uint8_t * _buffer;
+    std::unique_ptr<uint8_t []> _buffer;
 
     uint32_t _image_size;
 

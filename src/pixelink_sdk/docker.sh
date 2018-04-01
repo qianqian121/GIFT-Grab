@@ -8,6 +8,8 @@ MOUNT_OPTS="-v ~/project:/home/dev/project -v ~/:/mnt"
 
 USB_DEVICES_OPTS="-v /dev/platform:/dev/platform:rw"
 
+DEVICES_OPTS="-v /dev:/dev:rw"
+
 DEVS="$(lsusb -d 1996: | cut -d ' ' -f 2,4 | sed 's/://')"
 
 IFS='

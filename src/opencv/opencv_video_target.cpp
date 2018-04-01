@@ -82,8 +82,8 @@ void VideoTargetOpenCV::append(const VideoFrame & frame)
                               const_cast<unsigned char *>(frame.data()));
         cv::cvtColor(cv_frame_bgra, _buffer_bgr, CV_BGRA2BGR);
 //        easy 20180329 debug imshow
-//        cv::imshow("cv imshow", _buffer_bgr);
-//        cv::waitKey(30);
+        cv::imshow("cv imshow", _buffer_bgr);
+        cv::waitKey(30);
         _writer << _buffer_bgr;
     }
     catch (std::exception & e)

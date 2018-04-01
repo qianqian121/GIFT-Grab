@@ -82,6 +82,7 @@ public:
     PXL_RETURN_CODE setFlip (bool horizontal, bool vertical);
 
     PXL_RETURN_CODE captureImage (const char* fileName, ULONG imageType);
+    PXL_RETURN_CODE getNextFrame (ULONG bufferSize, void*pFrame);
 
 private:
     PXL_RETURN_CODE getFlags (ULONG feature, ULONG *flags);
