@@ -30,10 +30,10 @@ int main(int argc, char* argv[]) {
 //    target = factory_target.create_file_writer(codec, "opencv_output.avi", 30.0);
 
     gg::Codec codec = gg::Codec::HEVC;
-    target = factory_target.create_file_writer(codec, "ffmpeg.mp4", 30.0);
+    target = factory_target.create_file_writer(codec, "ffmpeg.mp4", 3.0);
 
     source->attach(*target);
-    std::this_thread::sleep_for(20s);
+    std::this_thread::sleep_for(5s);
     source->detach(*target);
     delete target;
     return 0;
