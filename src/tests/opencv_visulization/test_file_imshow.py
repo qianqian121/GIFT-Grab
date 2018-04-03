@@ -45,7 +45,7 @@ class MyProcNode(IObservableObserver):
         # Implement gg::IObserver::update(frame)
         data_np = frame.data()
         cv2.imshow('img', data_np)
-        cv2.waitKey()
+        cv2.waitKey(1)
 
 def test_file_to_imshow(filename):
     proc_node = MyProcNode()
@@ -56,6 +56,7 @@ def test_file_to_imshow(filename):
     file_reader.attach(proc_node)
     time.sleep(20)
     file_reader.detach(proc_node)
+    cv2.destroyAllWindows()
 
 def main():
     filename = get_args()
