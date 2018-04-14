@@ -23,7 +23,8 @@
 #include <boost/python.hpp>
 #include <boost/python/exception_translator.hpp>
 #ifdef USE_NUMPY
-#include <boost/python/numpy.hpp>
+#include <boost/numpy.hpp>
+#include <boost/numpy/ndarray.hpp>
 #endif
 
 using namespace boost::python;
@@ -122,7 +123,7 @@ public:
     //! \return a flat NumPy array
     //! \sa data_as_ndarray()
     //!
-    numpy::ndarray data_as_flat_ndarray() const
+    boost::numpy::ndarray data_as_flat_ndarray() const
     {
         return data_as_ndarray(false);
     }
@@ -138,10 +139,10 @@ public:
     //! other than BGRA (currently only BGRA data supported for
     //! structured ndarray exposure)
     //!
-    numpy::ndarray data_as_ndarray(bool structured) const
+    boost::numpy::ndarray data_as_ndarray(bool structured) const
     {
         tuple shape, strides;
-        numpy::dtype data_type = numpy::dtype::get_builtin<uint8_t>();
+        boost::numpy::dtype data_type = boost::numpy::dtype::get_builtin<uint8_t>();
         if (structured)
         {
             switch(colour())
@@ -167,7 +168,7 @@ public:
             strides = make_tuple(sizeof(uint8_t));
         }
 
-        return numpy::from_data(
+        return boost::numpy::from_data(
                     _frame->data(), data_type, shape, strides,
                     // owner (dangerous to pass None)
                     object()
@@ -402,7 +403,7 @@ BOOST_PYTHON_MODULE(pygiftgrab)
 {
     PyEval_InitThreads();
 #ifdef USE_NUMPY
-    boost::python::numpy::initialize();
+    boost::numpy::initialize();
 #endif
 
     register_exception_translator<gg::BasicException>(&translate_BasicException);

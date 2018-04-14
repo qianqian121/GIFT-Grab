@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 '''
-Python test FFMPEG file reader grab video frame then imshow
+Python test FFMPEG file reader grab video frame then write using opencv
 Example command:
 ./test_file_imshow.py --file=/mnt/Video/ffmpeg.mp4
 '''
@@ -12,7 +12,6 @@ from pygiftgrab import VideoTargetFactory
 from pygiftgrab import Codec
 from pygiftgrab import ColourSpace
 from pygiftgrab import VideoSourceFactory
-from pygiftgrab import IObserver
 import numpy as np
 import cv2
 import time
@@ -24,7 +23,6 @@ import argparse
 
 __author__ = ''
 
-factory = VideoSourceFactory.get_instance()
 
 def get_args():
     '''This function parses and return arguments passed in'''
@@ -41,25 +39,18 @@ def get_args():
     # Return all variable values
     return filename
 
-class MyProcNode(IObserver):
-    def __init__(self):
-        super(MyProcNode, self).__init__()
-    def update(self, frame):
-        # Implement gg::IObserver::update(frame)
-        data_np = frame.data(True)
-        cv2.imshow('img', data_np)
-        cv2.waitKey(1)
-
 def test_file_to_imshow(filename):
-    proc_node = MyProcNode()
-    global factory
-    file_reader = factory.create_file_reader(
+    factory_source = VideoSourceFactory.get_instance()
+    file_reader = factory_source.create_file_reader(
         filename, ColourSpace.BGRA
     )
-    file_reader.attach(proc_node)
+    factory_target = VideoTargetFactory.get_instance()
+    file_writer = factory_target.create_file_writer(Codec.Xvid,
+                                                    'opencv_output_py.avi',
+                                                    30)
+    file_reader.attach(file_writer)
     time.sleep(20)
-    file_reader.detach(proc_node)
-    cv2.destroyAllWindows()
+    file_reader.detach(file_writer)
 
 def main():
     filename = get_args()
